@@ -1,81 +1,136 @@
-Healthcare Dashboard – Power BI
-Overview
-A Power BI dashboard designed for healthcare administrators to visualize patient flow, admission patterns, bed utilization, and discharge efficiency. Built to support data-driven decisions and resource optimization.
+Healthcare Patient Flow & Operations Dashboard
+📊 Project Overview
+This repository contains a Power BI dashboard designed to track and analyze patient admissions, discharges, bed utilization, and operational trends in a healthcare setting. The dashboard transforms raw admission records into actionable insights, enabling hospital administrators and department heads to monitor performance, identify bottlenecks, and make data-driven decisions.
 
-Features
-Key Metrics – Total Patients, YTD Total, Bed Occupancy %, Avg. Length of Stay
+The project follows a structured approach based on a provided business problem, covering key performance indicators (KPIs), admission patterns, departmental breakdowns, and temporal trends.
 
-Admission/Discharge Analysis – Monthly trends, cards for totals
+🎯 Objective
+Monitor Core Metrics: Track total patients, year-to-date admissions, average length of stay, and bed occupancy percentage.
 
-Admission Heatmap – By hour of day and day of week
+Analyze Admission Patterns: Identify peak admission hours, busy weekdays, and seasonal trends.
 
-Department & Diagnosis Breakdown – Bar charts for top departments/diagnoses
+Evaluate Department & Diagnosis Load: Understand which departments and diagnoses drive admissions.
 
-Weekday vs Weekend Comparison – Donut chart showing admission proportions
+Compare Weekday vs Weekend Activity: Assess differences in admission volumes to guide staffing and resource planning.
 
-Interactive Slicers – Date range, AM/PM period, and toggle between admissions/discharges
+Deliver an Interactive Dashboard: Provide a user-friendly interface with slicers for date, time of day (AM/PM), and view toggles (admissions/discharges).
 
-Data Requirements
-The dashboard expects a dataset containing at least:
+🛠️ Tools & Technologies
+Data Visualization: Microsoft Power BI Desktop
 
-Patient ID
+Data Modeling: DAX (Data Analysis Expressions)
 
-Admission Date & Time (as decimal hours, e.g., 11.34 for 11:20)
+Data Transformation: Power Query (M language)
 
-Discharge Date & Time (optional but needed for length of stay)
+Data Source: Hospital admission records (CSV/Excel)
 
-Department
+🔑 Key Features & Measures
+Data Modeling
+Star Schema: Fact table (Admissions) connected to dimension tables (Date, Department, Diagnosis).
 
-Diagnosis
+Date Table: Created using CALENDARAUTO() with columns for Year, Month, Month Name, Week Number, Weekday, and a custom WeekType (Weekday/Weekend).
 
-Bed ID (optional for bed occupancy calculation)
+Measures Table: A dedicated table to store all DAX measures for improved organization and performance.
 
-Measures (DAX)
-All measures are grouped in a Measures folder:
-
+Core DAX Measures
+dax
+-- Total Patients
 Total Patients = COUNTROWS(Admissions)
 
+-- Total Patients YTD
 Total Patients YTD = TOTALYTD([Total Patients], 'Date'[Date])
 
-Bed Occupancy % = DIVIDE([Total Patients], [Total Available Beds], 0) * 100
+-- Bed Occupancy % (assuming 200 available beds)
+Bed Occupancy % = DIVIDE([Total Patients], 200, 0) * 100
 
-Avg Length of Stay = AVERAGEX(FILTER(Admissions, Admissions[Discharge Date] <> BLANK()), DATEDIFF(Admissions[Admission Date], Admissions[Discharge Date], DAY))
+-- Average Length of Stay (days)
+Avg Length of Stay = 
+AVERAGEX(
+    FILTER(Admissions, Admissions[Discharge Date] <> BLANK()),
+    DATEDIFF(Admissions[Admission Date], Admissions[Discharge Date], DAY)
+)
 
+-- Total Admissions (implicitly same as Total Patients, but defined for clarity)
 Total Admissions = COUNTROWS(Admissions)
 
-Total Discharges = COUNTROWS(FILTER(Admissions, Admissions[Discharge Date] <> BLANK()))
+-- Total Discharges
+Total Discharges = 
+CALCULATE(
+    COUNTROWS(Admissions),
+    NOT(ISBLANK(Admissions[Discharge Date]))
+)
 
-Visuals Included
-KPI Cards – Four top-level metrics.
+-- Admission Hour (calculated column in Power Query)
+// Rounded from decimal time (e.g., 11.34 → 11)
+Dashboard Pages
+Overview Page – KPI cards, admission heatmap, weekday/weekend donut, and monthly trend.
 
-Admission Heatmap – Matrix (rows = weekday, columns = hour) with conditional formatting.
+Department & Diagnosis Analysis – Bar charts for admissions by department and diagnosis, with drill-through capabilities.
 
-Monthly Admissions & Discharges – Line and clustered column chart.
+Trends & Comparisons – Daily admission vs discharge line chart, time-based slicers, and a toggle for AM/PM views.
 
-Admissions by Department – Horizontal bar chart.
+Geographic & Payer Insights (if data available) – Map view of admissions by state/city, insurance vs out-of-pocket breakdown.
 
-Admissions by Diagnosis – Horizontal bar chart.
+Interactive Features
+Slicers: Date range, AM/PM period (based on rounded admission hour), and a what‑if parameter to switch between viewing admissions and discharges.
 
-Weekday vs Weekend Donut – Shows percentage split.
+Conditional Formatting: Heatmap cells colored by admission count for quick pattern recognition.
 
-Admission vs Discharge Trend – Daily line chart.
+Drill-through: Right-click from a department to see detailed patient list.
 
-Slicers – Date, AM/PM, and view toggle (Admissions/Discharges).
+🚀 How to Use
+Prerequisites
+Install Power BI Desktop (free).
 
-How to Use
-Load Data – Import your dataset (CSV/Excel) into Power BI.
+Prepare your dataset with the required columns: Patient ID, Admission Date, Admission Time (decimal hours), Discharge Date, Department, Diagnosis, (optional) Bed ID, State, City, Insurance Amount, Out of Pocket.
 
-Transform Data – Round time column to nearest hour, replace errors, create a Date table (with Year, Month, Weekday, WeekType).
+Steps
+Load Data: Import your CSV/Excel file using Get Data.
 
-Create Relationships – Connect Date table to Admission Date.
+Transform Data (Power Query):
 
-Add Measures – Use the DAX formulas above.
+Round Admission Time to the nearest hour:
+= Table.AddColumn(#"Previous Step", "Admission Hour", each Number.Round([Admission Time]), Int64.Type)
 
-Build Visuals – Arrange as described, apply slicers.
+Replace errors (e.g., nulls in key columns).
 
-Publish – (Optional) to Power BI Service.
+Create a Date table if not already present (use the DAX below or Power Query).
 
-Requirements
-Power BI Desktop (free)
+Build the Date Table (DAX):
 
-Basic understanding of DAX and data modeling
+dax
+Date = CALENDAR(MIN(Admissions[Admission Date]), MAX(Admissions[Discharge Date]))
+Add calculated columns: Year, Quarter, Month, Month Name, Week Number, Weekday, WeekType.
+
+Establish Relationships: Connect Date[Date] to Admissions[Admission Date] (active) and optionally to Discharge Date (inactive).
+
+Create Measures: Copy the DAX measures into the model and group them in a folder named "Measures".
+
+Design Visuals: Arrange the visuals as described in the Key Features section.
+
+Add Interactivity: Insert slicers, configure the AM/PM filter, and set up the what‑if parameter.
+
+Publish: Save the .pbix file and optionally publish to Power BI Service.
+
+💡 Insights & Recommendations (Example)
+Peak Admission Hours: The heatmap reveals highest admissions on weekdays between 10 AM – 2 PM; consider scheduling additional staff during these windows.
+
+Department Load: Cardiology and Orthopedics account for over 50% of admissions; ensure adequate bed capacity and nursing resources.
+
+Length of Stay: Average stay is 4.2 days; surgical patients tend to stay longer – explore discharge planning improvements.
+
+Weekend Admissions: Only 28% of admissions occur on weekends; staffing could be slightly reduced on Saturdays/Sundays without impacting service.
+
+Seasonal Trends: Admissions spike in January and July; plan for these peaks in budget and staffing cycles.
+
+📈 Future Work
+Integrate readmission rates to track quality of care.
+
+Add predictive analytics to forecast daily admission volumes.
+
+Include patient satisfaction scores to correlate with operational metrics.
+
+Automate data refresh via Power BI Gateway for real-time monitoring.
+
+📄 License
+This project is provided for educational and professional use. Feel free to adapt it to your specific needs.
