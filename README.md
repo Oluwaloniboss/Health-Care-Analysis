@@ -1,4 +1,5 @@
 Healthcare Patient Flow & Operations Dashboard
+
 📊 Project Overview
 This repository contains a Power BI dashboard designed to track and analyze patient admissions, discharges, bed utilization, and operational trends in a healthcare setting. The dashboard transforms raw admission records into actionable insights, enabling hospital administrators and department heads to monitor performance, identify bottlenecks, and make data-driven decisions.
 
