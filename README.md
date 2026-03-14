@@ -1,11 +1,13 @@
 Healthcare Patient Flow & Operations Dashboard
 
 📊 Project Overview
+
 This repository contains a Power BI dashboard designed to track and analyze patient admissions, discharges, bed utilization, and operational trends in a healthcare setting. The dashboard transforms raw admission records into actionable insights, enabling hospital administrators and department heads to monitor performance, identify bottlenecks, and make data-driven decisions.
 
 The project follows a structured approach based on a provided business problem, covering key performance indicators (KPIs), admission patterns, departmental breakdowns, and temporal trends.
 
 🎯 Objective
+
 Monitor Core Metrics: Track total patients, year-to-date admissions, average length of stay, and bed occupancy percentage.
 
 Analyze Admission Patterns: Identify peak admission hours, busy weekdays, and seasonal trends.
@@ -17,6 +19,7 @@ Compare Weekday vs Weekend Activity: Assess differences in admission volumes to 
 Deliver an Interactive Dashboard: Provide a user-friendly interface with slicers for date, time of day (AM/PM), and view toggles (admissions/discharges).
 
 🛠️ Tools & Technologies
+
 Data Visualization: Microsoft Power BI Desktop
 
 Data Modeling: DAX (Data Analysis Expressions)
@@ -26,6 +29,7 @@ Data Transformation: Power Query (M language)
 Data Source: Hospital admission records (CSV/Excel)
 
 🔑 Key Features & Measures
+
 Data Modeling
 Star Schema: Fact table (Admissions) connected to dimension tables (Date, Department, Diagnosis).
 
